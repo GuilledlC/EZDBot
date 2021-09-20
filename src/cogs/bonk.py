@@ -5,6 +5,7 @@ from PIL import Image
 from random import choice
 from discord.ext import commands
 
+whitelist = [225644848336601089]
 
 CIRCLE_MASK_DIR = os.path.join(os.environ["ROOT_DIRECTORY"], 'assets', 'images', 'bonk', 'CircleMask.png')
 CHEEMS_IMAGE_DIR = os.path.join(os.environ["ROOT_DIRECTORY"], 'assets', 'images', 'bonk', 'Bonk') # It just needs the frame number and .png
@@ -82,9 +83,10 @@ class Bonk(commands.Cog):
         editedFrames[0].save(TEMP_FINAL_GIF_PATH, save_all=True, format='GIF', loop=0, duration=300, append_images=[editedFrames[1], editedFrames[1]])
 
         # Send the image
-        with open(TEMP_FINAL_GIF_PATH, 'rb') as finalImageFile:
-            finalImageDiscord = discord.File(finalImageFile)
-            await ctx.send(file=finalImageDiscord)
+        if ctx.message.mentions[0].id not in whitelist:
+            with open(TEMP_FINAL_GIF_PATH, 'rb') as finalImageFile:
+                finalImageDiscord = discord.File(finalImageFile)
+                await ctx.send(file=finalImageDiscord)
         
         # Delete fetched pfp and final gif
         os.remove(TEMP_PFP_IMAGE_PATH)
